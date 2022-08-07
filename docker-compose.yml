@@ -15,27 +15,72 @@ services:
       - ./src:/var/www/html:delegated
     depends_on:
       - php
-      - mysql
-      - phpmyadmin
+      - mongo
+      - mongo-express
     networks:
       - laravel
 
-  mysql:
-    image: mariadb:10.6
-    container_name: mysql
-    restart: unless-stopped
-    tty: true
-    ports:
-      - 3306:3306
+  # mysql:
+  #   image: mariadb:10.6
+  #   container_name: mysql
+  #   restart: unless-stopped
+  #   tty: true
+  #   ports:
+  #     - 3306:3306
+  #   volumes:
+  #     - ./mysql:/var/lib/mysql
+  #   environment:
+  #     MYSQL_DATABASE: musics
+  #     MYSQL_USER: homestead
+  #     MYSQL_PASSWORD: secret
+  #     MYSQL_ROOT_PASSWORD: secret
+  #     SERVICE_TAGS: dev
+  #     SERVICE_NAME: mysql
+  #   networks:
+  #     - laravel
+
+
+  # phpmyadmin:
+  #   image: phpmyadmin/phpmyadmin
+  #   container_name: phpmyadmin
+  #   depends_on:
+  #     - mysql
+  #   restart: always
+  #   ports:
+  #     - 8082:80
+  #   environment:
+  #     PMA_HOST: mysql
+  #     UPLOAD_LIMIT: 500M
+  #     MYSQL_ROOT_PASSWORD: secret
+  #   networks:
+  #     - laravel
+
+
+  mongo:
+    image: mongo:4.4.6
+    restart: always
+    ports: 
+      - "27017:27017"
     volumes:
-      - ./mysql:/var/lib/mysql
+      - ./mongodb:/data/db
     environment:
-      MYSQL_DATABASE: musics
-      MYSQL_USER: homestead
-      MYSQL_PASSWORD: secret
-      MYSQL_ROOT_PASSWORD: secret
-      SERVICE_TAGS: dev
-      SERVICE_NAME: mysql
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=secret
+      - MONGO_INITDB_DATABASE=musics
+    networks:
+      - laravel
+
+  mongo-express:
+    image: mongo-express:latest
+    restart: always
+    ports: 
+      - "8081:8081"
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=root
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=secret
+      - ME_CONFIG_MONGODB_SERVER=mongo
+    depends_on:
+      - mongo
     networks:
       - laravel
 
@@ -46,21 +91,6 @@ services:
     container_name: php
     volumes:
       - ./src:/var/www/html:delegated
-    networks:
-      - laravel
-
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    container_name: phpmyadmin
-    depends_on:
-      - mysql
-    restart: always
-    ports:
-      - 8082:80
-    environment:
-      PMA_HOST: mysql
-      UPLOAD_LIMIT: 500M
-      MYSQL_ROOT_PASSWORD: secret
     networks:
       - laravel
 
@@ -85,8 +115,12 @@ services:
     volumes:
       - ./src:/var/www/html:delegated
     depends_on:
-      - mysql
+      - mongo
     working_dir: /var/www/html
     entrypoint: ['php', '/var/www/html/artisan']
     networks:
       - laravel
+
+# volumes:
+#   mongodb:
+#     driver: local
