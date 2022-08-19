@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\MusicController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,3 +21,4 @@ Route::get('/login',[LoginController::class, 'index'])->name('login');
 Route::get('/google-login', [LoginController::class, 'redirectToProvider'])->name('google-login');
 Route::get('/callback', [LoginController::class, 'handleProviderCallback']);
 
+Route::get('/musics/{slug}', [MusicController::class, 'show']);
