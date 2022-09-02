@@ -87,12 +87,14 @@ services:
   php:
     build:
       context: ./dockerfiles
-      dockerfile: php.root.dockerfile
+      dockerfile: php.dockerfile
     container_name: php
     volumes:
       - ./src:/var/www/html:delegated
     networks:
       - laravel
+    depends_on:
+      - mongo
 
   composer:
     image: composer:2

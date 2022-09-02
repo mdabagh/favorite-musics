@@ -41,7 +41,7 @@ services:
   php:
     build:
       context: ./dockerfiles
-      dockerfile: php.root.dockerfile
+      dockerfile: php.dockerfile
     container_name: php
     volumes:
       - ./src:/var/www/html:delegated

@@ -22,4 +22,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::resource('musics', MusicController::class)->only([
     'destroy', 'show', 'store', 'update'
- ]);
+]);
